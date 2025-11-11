@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict - Road Risk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🚗 Road Safety AI</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict">Predict</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="prediction-section">
+            <h2 class="section-title slide-in">Predict Accident Risk</h2>
+            
+            {% if error %}
+            <div class="alert alert-error fade-in">{{ error }}</div>
+            {% endif %}
+            
+            <form method="POST" class="prediction-form fade-in">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Road Type</label>
+                        <select name="road_type" required>
+                            <option value="highway">Highway</option>
+                            <option value="urban">Urban</option>
+                            <option value="rural">Rural</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number of Lanes</label>
+                        <input type="number" name="num_lanes" min="1" max="8" value="2" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Curvature (0-1)</label>
+                        <input type="number" name="curvature" step="0.01" min="0" max="1" value="0.2" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Speed Limit (km/h)</label>
+                        <input type="number" name="speed_limit" min="20" max="120" value="60" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lighting</label>
+                        <select name="lighting" required>
+                            <option value="daylight">Daylight</option>
+                            <option value="dusk">Dusk</option>
+                            <option value="darkness">Darkness</option>
+                            <option value="street_lit">Street Lit</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Weather</label>
+                        <select name="weather" required>
+                            <option value="clear">Clear</option>
+                            <option value="rainy">Rainy</option>
+                            <option value="foggy">Foggy</option>
+                            <option value="snowy">Snowy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Road Signs Present</label>
+                        <select name="road_signs_present" required>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Public Road</label>
+                        <select name="public_road" required>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Time of Day</label>
+                        <select name="time_of_day" required>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="evening">Evening</option>
+                            <option value="night">Night</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Holiday</label>
+                        <select name="holiday" required>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>School Season</label>
+                        <select name="school_season" required>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reported Accidents</label>
+                        <input type="number" name="num_reported_accidents" min="0" max="100" value="0" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Predict Risk 🚀</button>
+            </form>
+
+            {% if result %}
+            <div class="result-card slide-up">
+                <div class="result-header" style="background: {{ result.risk_color }}">
+                    <span class="result-icon">{{ result.risk_icon }}</span>
+                    <h3>{{ result.risk_level }}</h3>
+                </div>
+                <div class="result-body">
+                    <p class="result-score">Risk Score: <strong>{{ result.prediction }}</strong></p>
+                    <p class="result-message">{{ result.risk_message }}</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ result.prediction * 100 }}%; background: {{ result.risk_color }}"></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Road Safety AI | ML Predictions</p>
+    </footer>
+</body>
+</html>

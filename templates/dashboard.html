@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoring</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🚗 Road Safety AI</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict">Predict</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="section-title slide-in">Monitoring Dashboard</h2>
+        
+        <div class="dashboard-grid">
+            <div class="stat-card fade-in" style="animation-delay: 0.1s">
+                <div class="stat-icon">📊</div>
+                <h3>Data Drift Report</h3>
+                <p class="stat-value">Interactive</p>
+                <a href="/reports/drift" target="_blank" class="stat-link">View Report →</a>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.2s">
+                <div class="stat-icon">🎯</div>
+                <h3>Performance Metrics</h3>
+                <p class="stat-value">Active</p>
+                <a href="/reports/performance" target="_blank" class="stat-link">View Metrics →</a>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.3s">
+                <div class="stat-icon">📈</div>
+                <h3>Make Predictions</h3>
+                <p class="stat-value">Real-Time</p>
+                <a href="/predict" class="stat-link">Test Now →</a>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.4s">
+                <div class="stat-icon">�</div>
+                <h3>MLflow Dashboard</h3>
+                <p class="stat-value">Experiments</p>
+                <a href="https://dagshub.com/abheshith7/ML-Pipeline-Evidently.mlflow/#/experiments/0?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10%3D" target="_blank" class="stat-link">View MLflow →</a>
+            </div>
+        </div>
+
+        <div class="info-section slide-up">
+            <h3>Monitoring Features</h3>
+            <ul class="feature-list">
+                <li>✅ Real-time data drift detection</li>
+                <li>✅ Model performance tracking</li>
+                <li>✅ Interactive Evidently dashboard</li>
+                <li>✅ Automated report generation</li>
+                <li>✅ Feature importance analysis</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Road Safety AI | Monitoring Dashboard</p>
+    </footer>
+</body>
+</html>

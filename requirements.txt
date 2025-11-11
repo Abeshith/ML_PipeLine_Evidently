@@ -1,0 +1,16 @@
+pandas
+scikit-learn
+numpy
+joblib
+fastapi
+uvicorn
+evidently
+requests
+PyYAML
+ipykernel
+matplotlib
+seaborn
+dagshub
+mlflow
+airflow
+dvc

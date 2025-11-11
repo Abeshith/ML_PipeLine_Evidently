@@ -1,0 +1,17 @@
+columns:
+  id: int
+  road_type: object
+  num_lanes: int
+  curvature: float
+  speed_limit: int
+  lighting: object
+  weather: object
+  road_signs_present: bool
+  public_road: bool
+  time_of_day: object
+  holiday: bool
+  school_season: bool
+  num_reported_accidents: int
+  accident_risk: float
+
+target_column: accident_risk

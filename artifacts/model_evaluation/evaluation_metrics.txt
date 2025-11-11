@@ -1,0 +1,12 @@
+Model Evaluation Metrics
+==================================================
+
+Mean Squared Error (MSE): 0.003440
+Root Mean Squared Error (RMSE): 0.058650
+Mean Absolute Error (MAE): 0.045789
+R2 Score: 0.876007
+Mean Absolute Percentage Error (MAPE): inf%
+
+==================================================
+Model Performance Interpretation:
+ Excellent: Model explains >80% of variance

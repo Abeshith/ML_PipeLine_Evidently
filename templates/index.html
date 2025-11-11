@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Accident Risk Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🚗 Road Safety AI</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/predict">Predict</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content slide-in">
+            <h1 class="hero-title">Predict Road Accident Risk</h1>
+            <p class="hero-subtitle">AI-powered analysis of road conditions for safer travel</p>
+            <a href="/predict" class="cta-button">Start Prediction</a>
+        </div>
+        <div class="hero-animation">
+            <div class="road-line"></div>
+            <div class="car-icon">🚗</div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card fade-in" style="animation-delay: 0.2s">
+            <div class="feature-icon">📊</div>
+            <h3>Data-Driven</h3>
+            <p>Advanced ML model trained on real accident data</p>
+        </div>
+        <div class="feature-card fade-in" style="animation-delay: 0.4s">
+            <div class="feature-icon">⚡</div>
+            <h3>Real-Time</h3>
+            <p>Instant risk predictions for any road condition</p>
+        </div>
+        <div class="feature-card fade-in" style="animation-delay: 0.6s">
+            <div class="feature-icon">🎯</div>
+            <h3>Accurate</h3>
+            <p>Gradient Boosting with feature engineering</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Road Safety AI | Powered by ML Pipeline</p>
+    </footer>
+</body>
+</html>
