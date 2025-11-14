@@ -17,11 +17,9 @@ class ModelMonitoring:
     def __init__(self, config: MonitoringConfig):
         self.config = config
         
-        # Create monitoring directory if it doesn't exist
         os.makedirs(self.config.root_dir, exist_ok=True)
 
     def load_model(self):
-        """Load trained model"""
         try:
             with open(self.config.model_path, 'rb') as f:
                 model = pickle.load(f)
@@ -31,7 +29,6 @@ class ModelMonitoring:
             raise CustomException(e, sys)
 
     def load_data(self):
-        """Load reference and current data"""
         try:
             reference_data = pd.read_csv(self.config.reference_data_path)
             current_data = pd.read_csv(self.config.current_data_path)
@@ -44,15 +41,11 @@ class ModelMonitoring:
             raise CustomException(e, sys)
 
     def generate_report(self):
-        """Generate comprehensive Evidently monitoring reports with interactive HTML"""
         try:
             logger.info("Generating Evidently monitoring reports...")
             
-            # Load model and data
             model = self.load_model()
             reference_data, current_data = self.load_data()
-            
-            # Drop target column if exists and make predictions
             if self.config.target_column in reference_data.columns:
                 X_ref = reference_data.drop(self.config.target_column, axis=1)
                 X_cur = current_data.drop(self.config.target_column, axis=1)
@@ -60,18 +53,14 @@ class ModelMonitoring:
                 X_ref = reference_data
                 X_cur = current_data
             
-            # Add predictions to data
             reference_data['prediction'] = model.predict(X_ref)
             current_data['prediction'] = model.predict(X_cur)
             
             logger.info(f"Reference data shape: {reference_data.shape}")
             logger.info(f"Current data shape: {current_data.shape}")
             
-            # Identify feature types
             numerical_features = X_ref.select_dtypes(include=['int64', 'float64']).columns.tolist()
             categorical_features = X_ref.select_dtypes(include=['object', 'category']).columns.tolist()
-            
-            # Generate Data Drift Report
             logger.info("Generating Data Drift Report...")
             data_drift_report = Report(metrics=[DataDriftPreset()])
             drift_snapshot = data_drift_report.run(
@@ -80,14 +69,11 @@ class ModelMonitoring:
             )
             drift_html = os.path.join(self.config.root_dir, 'data_drift_report.html')
             drift_snapshot.save_html(drift_html)
-            logger.info(f"✅ Data drift report saved: {drift_html}")
-            
-            # Calculate basic statistics for detailed summary
+            logger.info(f"Data drift report saved: {drift_html}")
             ref_mean = reference_data.select_dtypes(include=['number']).mean()
             cur_mean = current_data.select_dtypes(include=['number']).mean()
             drift_pct = ((cur_mean - ref_mean) / ref_mean * 100).abs()
             
-            # Calculate model performance metrics
             ref_mae = mean_absolute_error(reference_data[self.config.target_column], reference_data['prediction'])
             ref_rmse = np.sqrt(mean_squared_error(reference_data[self.config.target_column], reference_data['prediction']))
             ref_r2 = r2_score(reference_data[self.config.target_column], reference_data['prediction'])
@@ -96,19 +82,17 @@ class ModelMonitoring:
             cur_rmse = np.sqrt(mean_squared_error(current_data[self.config.target_column], current_data['prediction']))
             cur_r2 = r2_score(current_data[self.config.target_column], current_data['prediction'])
             
-            # Detect significant drift (simple heuristic: >10% mean change in >30% of features)
             significant_drift_features = (drift_pct > 10).sum()
             total_features = len(drift_pct)
             drift_ratio = significant_drift_features / total_features if total_features > 0 else 0
             dataset_drift = drift_ratio > 0.3
             
-            # Save detailed text summary report
             with open(self.config.evidently_report_path, 'w', encoding='utf-8') as f:
                 f.write("=" * 80 + "\n")
                 f.write("EVIDENTLY AI - MODEL MONITORING SUMMARY\n")
                 f.write("=" * 80 + "\n\n")
                 
-                f.write("📊 DATASET INFORMATION\n")
+                f.write("DATASET INFORMATION\n")
                 f.write("-" * 80 + "\n")
                 f.write(f"Reference Data Size: {len(reference_data)} rows × {len(reference_data.columns)} columns\n")
                 f.write(f"Current Data Size: {len(current_data)} rows × {len(current_data.columns)} columns\n")
@@ -117,7 +101,7 @@ class ModelMonitoring:
                 f.write(f"Categorical Features: {len(categorical_features)}\n\n")
                 
                 f.write("=" * 80 + "\n")
-                f.write("🎯 MODEL PERFORMANCE COMPARISON\n")
+                f.write("MODEL PERFORMANCE COMPARISON\n")
                 f.write("=" * 80 + "\n")
                 f.write(f"{'Metric':<20} {'Reference':<15} {'Current':<15} {'Change %':<15}\n")
                 f.write("-" * 80 + "\n")
@@ -130,45 +114,45 @@ class ModelMonitoring:
                 f.write(f"{'R² Score':<20} {ref_r2:<15.4f} {cur_r2:<15.4f} {r2_change:>+14.2f}%\n\n")
                 
                 f.write("=" * 80 + "\n")
-                f.write("🔍 DRIFT DETECTION SUMMARY\n")
+                f.write("DRIFT DETECTION SUMMARY\n")
                 f.write("=" * 80 + "\n")
-                f.write(f"Dataset Drift Detected: {'🔴 YES' if dataset_drift else '🟢 NO'}\n")
+                f.write(f"Dataset Drift Detected: {'YES' if dataset_drift else 'NO'}\n")
                 f.write(f"Features with >10% change: {significant_drift_features}/{total_features} ({drift_ratio:.1%})\n")
                 f.write(f"Drift Threshold: 30% of features\n\n")
                 
                 f.write("=" * 80 + "\n")
-                f.write("📈 FEATURE DRIFT ANALYSIS (Mean % Change)\n")
+                f.write("FEATURE DRIFT ANALYSIS (Mean % Change)\n")
                 f.write("=" * 80 + "\n")
                 drift_sorted = drift_pct.sort_values(ascending=False)
-                for col in drift_sorted.index[:15]:  # Top 15 drifted features
-                    status = "🔴" if drift_sorted[col] > 10 else "🟡" if drift_sorted[col] > 5 else "🟢"
-                    f.write(f"{status} {col:.<50} {drift_sorted[col]:>6.2f}%\n")
+                for col in drift_sorted.index[:15]:
+                    status = "" if drift_sorted[col] > 10 else "" if drift_sorted[col] > 5 else ""
+                    f.write(f"{col:.<50} {drift_sorted[col]:>6.2f}%\n")
                 
                 f.write("\n" + "=" * 80 + "\n")
-                f.write("📁 GENERATED REPORTS\n")
+                f.write("GENERATED REPORTS\n")
                 f.write("=" * 80 + "\n")
                 f.write(f"1. Data Drift Report: {drift_html}\n")
                 f.write(f"2. Text Summary: {self.config.evidently_report_path}\n\n")
                 
-                f.write("💡 RECOMMENDATIONS\n")
+                f.write("RECOMMENDATIONS\n")
                 f.write("-" * 80 + "\n")
                 if dataset_drift:
-                    f.write("⚠️  Data drift detected! Consider:\n")
-                    f.write("   • Retraining the model with recent data\n")
-                    f.write("   • Investigating root causes of drift\n")
-                    f.write("   • Adjusting feature engineering pipeline\n")
-                    f.write("   • Setting up automated retraining triggers\n")
+                    f.write("Data drift detected! Consider:\n")
+                    f.write("   - Retraining the model with recent data\n")
+                    f.write("   - Investigating root causes of drift\n")
+                    f.write("   - Adjusting feature engineering pipeline\n")
+                    f.write("   - Setting up automated retraining triggers\n")
                 else:
-                    f.write("✅ No significant drift detected\n")
-                    f.write("   • Continue monitoring periodically\n")
-                    f.write("   • Maintain current model in production\n")
-                    f.write("   • Keep tracking performance metrics\n")
+                    f.write("No significant drift detected\n")
+                    f.write("   - Continue monitoring periodically\n")
+                    f.write("   - Maintain current model in production\n")
+                    f.write("   - Keep tracking performance metrics\n")
                 
                 if abs(r2_change) > 5:
-                    f.write(f"\n⚠️  R² score changed by {r2_change:+.1f}% - Monitor model performance closely!\n")
+                    f.write(f"\nR² score changed by {r2_change:+.1f}% - Monitor model performance closely!\n")
                 
                 f.write("\n" + "=" * 80 + "\n")
-                f.write("🎯 HOW TO VIEW REPORTS\n")
+                f.write("HOW TO VIEW REPORTS\n")
                 f.write("=" * 80 + "\n")
                 f.write("1. Open HTML file in your browser for interactive visualizations:\n")
                 f.write(f"   - Data Drift: {drift_html}\n")
@@ -177,11 +161,11 @@ class ModelMonitoring:
                 f.write("4. Set up automated report generation in production\n\n")
                 
                 f.write("=" * 80 + "\n")
-                f.write(f"✅ All reports generated successfully!\n")
+                f.write(f"All reports generated successfully!\n")
                 f.write("=" * 80 + "\n")
             
-            logger.info(f"📄 Summary report saved to {self.config.evidently_report_path}")
-            logger.info(f"🎉 Monitoring report generated successfully!")
+            logger.info(f"Summary report saved to {self.config.evidently_report_path}")
+            logger.info(f"Monitoring report generated successfully!")
             
             return {
                 'summary': str(self.config.evidently_report_path),
@@ -198,7 +182,6 @@ class ModelMonitoring:
             logger.error(f"Error generating monitoring report: {str(e)}")
             logger.info("Falling back to basic statistics report...")
             
-            # Fallback: Generate simple statistical report
             try:
                 model = self.load_model()
                 reference_data, current_data = self.load_data()

@@ -15,7 +15,6 @@ class ModelEvaluation:
         self.config = config
 
     def load_model(self):
-        """Load trained model"""
         try:
             with open(self.config.model_path, 'rb') as f:
                 model = pickle.load(f)
@@ -25,7 +24,6 @@ class ModelEvaluation:
             raise CustomException(e, sys)
 
     def load_test_data(self):
-        """Load test data"""
         try:
             test_data = pd.read_csv(self.config.test_data_path)
             X_test = test_data.drop(self.config.target_column, axis=1)
@@ -36,7 +34,6 @@ class ModelEvaluation:
             raise CustomException(e, sys)
 
     def calculate_metrics(self, y_true, y_pred) -> dict:
-        """Calculate evaluation metrics"""
         try:
             import numpy as np
             mse = mean_squared_error(y_true, y_pred)
@@ -58,7 +55,6 @@ class ModelEvaluation:
             raise CustomException(e, sys)
 
     def save_metrics(self, metrics: dict):
-        """Save metrics to file"""
         try:
             with open(self.config.metric_file_name, 'w') as f:
                 f.write("Model Evaluation Metrics\n")
@@ -84,7 +80,6 @@ class ModelEvaluation:
             raise CustomException(e, sys)
 
     def log_to_mlflow(self, metrics: dict):
-        """Log metrics to MLflow"""
         try:
             mlflow.set_tracking_uri(self.config.mlflow_uri)
             mlflow.set_experiment("Road Accident Risk Prediction")
@@ -96,30 +91,22 @@ class ModelEvaluation:
             logger.warning(f"Failed to log to MLflow: {str(e)}")
 
     def evaluate(self) -> dict:
-        """Main evaluation method"""
         try:
             logger.info("Starting model evaluation...")
             
-            # Load model and data
             model = self.load_model()
             X_test, y_test = self.load_test_data()
             
-            # Make predictions
             y_pred = model.predict(X_test)
             
-            # Calculate metrics
             metrics = self.calculate_metrics(y_test, y_pred)
-            
-            # Log metrics
             logger.info(f"RMSE: {metrics['rmse']:.4f}")
             logger.info(f"MAE: {metrics['mae']:.4f}")
             logger.info(f"R2 Score: {metrics['r2_score']:.4f}")
             logger.info(f"MAPE: {metrics['mape']:.2f}%")
             
-            # Save metrics
             self.save_metrics(metrics)
             
-            # Log to MLflow
             self.log_to_mlflow(metrics)
             
             logger.info("Model evaluation completed")

@@ -11,7 +11,6 @@ class DataValidation:
         self.config = config
 
     def validate_columns(self, df: pd.DataFrame) -> bool:
-        """Validate if all required columns exist"""
         try:
             all_cols = list(df.columns)
             missing_cols = [col for col in self.config.required_columns if col not in all_cols]
@@ -27,7 +26,6 @@ class DataValidation:
             raise CustomException(e, sys)
 
     def validate_nulls(self, df: pd.DataFrame) -> bool:
-        """Check for null values"""
         try:
             null_counts = df.isnull().sum()
             total_nulls = null_counts.sum()
@@ -44,7 +42,6 @@ class DataValidation:
             raise CustomException(e, sys)
 
     def validate_data_types(self, df: pd.DataFrame) -> bool:
-        """Validate data types"""
         try:
             logger.info("Data types validation:")
             logger.info(f"\n{df.dtypes}")
@@ -54,7 +51,6 @@ class DataValidation:
             raise CustomException(e, sys)
 
     def save_validation_status(self, status: str):
-        """Save validation status to file"""
         try:
             status_file = os.path.join(self.config.root_dir, self.config.STATUS_FILE)
             with open(status_file, 'w') as f:
@@ -66,20 +62,15 @@ class DataValidation:
             raise CustomException(e, sys)
 
     def validate(self) -> bool:
-        """Main validation method"""
         try:
             logger.info("Starting data validation...")
             
-            # Load data
             df = pd.read_csv(self.config.data_dir)
             logger.info(f"Loaded data shape: {df.shape}")
             
-            # Perform validations
             cols_valid = self.validate_columns(df)
             nulls_valid = self.validate_nulls(df)
             types_valid = self.validate_data_types(df)
-            
-            # Overall validation status
             validation_status = all([cols_valid, nulls_valid, types_valid])
             
             if validation_status:

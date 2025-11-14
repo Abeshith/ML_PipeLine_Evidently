@@ -15,7 +15,6 @@ class DataTransformation:
         self.label_encoders = {}
 
     def encode_categorical_features(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Encode categorical features using LabelEncoder"""
         try:
             logger.info("Encoding categorical features...")
             
@@ -29,7 +28,6 @@ class DataTransformation:
                     self.label_encoders[col] = le
                     logger.info(f"Encoded {col}")
             
-            # Save label encoders
             encoders_path = os.path.join(self.config.root_dir, 'label_encoders.pkl')
             with open(encoders_path, 'wb') as f:
                 pickle.dump(self.label_encoders, f)
@@ -41,15 +39,11 @@ class DataTransformation:
             raise CustomException(e, sys)
 
     def split_data(self, df: pd.DataFrame) -> tuple:
-        """Split data into train and test sets"""
         try:
             logger.info("Splitting data into train and test sets...")
             
-            # Drop id column if exists
             if 'id' in df.columns:
                 df = df.drop('id', axis=1)
-            
-            # Separate features and target
             if 'accident_risk' in df.columns:
                 X = df.drop('accident_risk', axis=1)
                 y = df['accident_risk']
@@ -59,7 +53,6 @@ class DataTransformation:
             else:
                 raise ValueError("Target column not found")
             
-            # Split data
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=0.2, random_state=42
             )
@@ -72,7 +65,6 @@ class DataTransformation:
             raise CustomException(e, sys)
 
     def scale_features(self, X_train: pd.DataFrame, X_test: pd.DataFrame) -> tuple:
-        """Scale features using StandardScaler"""
         try:
             logger.info("Scaling features...")
             
@@ -80,11 +72,8 @@ class DataTransformation:
             X_train_scaled = scaler.fit_transform(X_train)
             X_test_scaled = scaler.transform(X_test)
             
-            # Convert back to DataFrame
             X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
             X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns)
-            
-            # Save scaler
             with open(self.config.scaler_path, 'wb') as f:
                 pickle.dump(scaler, f)
             logger.info(f"Scaler saved to {self.config.scaler_path}")
@@ -95,28 +84,20 @@ class DataTransformation:
             raise CustomException(e, sys)
 
     def transform(self):
-        """Main transformation method"""
         try:
             logger.info("Starting data transformation...")
             
-            # Load data
             df = pd.read_csv(self.config.data_path)
             logger.info(f"Loaded data shape: {df.shape}")
             
-            # Encode categorical features
             df = self.encode_categorical_features(df)
             
-            # Split data
             X_train, X_test, y_train, y_test = self.split_data(df)
             
-            # Scale features
             X_train_scaled, X_test_scaled = self.scale_features(X_train, X_test)
             
-            # Combine features and target
             train_df = pd.concat([X_train_scaled, y_train.reset_index(drop=True)], axis=1)
             test_df = pd.concat([X_test_scaled, y_test.reset_index(drop=True)], axis=1)
-            
-            # Save train and test data
             train_df.to_csv(self.config.train_data_path, index=False)
             test_df.to_csv(self.config.test_data_path, index=False)
             

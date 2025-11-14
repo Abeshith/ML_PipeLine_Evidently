@@ -18,7 +18,6 @@ class ModelTrainer:
         self.config = config
         
     def load_data(self):
-        """Load train and test data"""
         try:
             train_data = pd.read_csv(self.config.train_data_path)
             test_data = pd.read_csv(self.config.test_data_path)
@@ -37,7 +36,6 @@ class ModelTrainer:
             raise CustomException(e, sys)
 
     def evaluate_model(self, y_true, y_pred) -> dict:
-        """Evaluate model performance"""
         try:
             import numpy as np
             mse = mean_squared_error(y_true, y_pred)
@@ -58,38 +56,27 @@ class ModelTrainer:
             raise CustomException(e, sys)
 
     def train_model(self, X_train, X_test, y_train, y_test, model_name: str, model, params: dict):
-        """Train a model and log to MLflow"""
         try:
             logger.info(f"Training {model_name}...")
             
             with mlflow.start_run(run_name=model_name):
-                # Set model parameters
                 model.set_params(**params)
                 
-                # Train model
                 model.fit(X_train, y_train)
                 
-                # Make predictions
                 y_train_pred = model.predict(X_train)
                 y_test_pred = model.predict(X_test)
                 
-                # Evaluate
                 train_metrics = self.evaluate_model(y_train, y_train_pred)
                 test_metrics = self.evaluate_model(y_test, y_test_pred)
                 
-                # Log parameters
                 mlflow.log_params(params)
-                
-                # Log metrics
                 mlflow.log_metric("train_rmse", train_metrics['rmse'])
                 mlflow.log_metric("train_mae", train_metrics['mae'])
                 mlflow.log_metric("train_r2", train_metrics['r2_score'])
                 mlflow.log_metric("test_rmse", test_metrics['rmse'])
                 mlflow.log_metric("test_mae", test_metrics['mae'])
                 mlflow.log_metric("test_r2", test_metrics['r2_score'])
-                
-                # Skip model logging to DagHub (unsupported endpoint)
-                # mlflow.sklearn.log_model(model, model_name)
                 
                 logger.info(f"{model_name} - Test RMSE: {test_metrics['rmse']:.4f}, Test R2: {test_metrics['r2_score']:.4f}")
                 
@@ -99,18 +86,13 @@ class ModelTrainer:
             raise CustomException(e, sys)
 
     def train(self):
-        """Main training method"""
         try:
             logger.info("Starting model training...")
             
-            # Set MLflow tracking URI
             mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "https://dagshub.com/abheshith7/ML-Pipeline-Evidently.mlflow"))
             mlflow.set_experiment("Road Accident Risk Prediction")
             
-            # Load data
             X_train, X_test, y_train, y_test = self.load_data()
-            
-            # Define models
             models = {
                 'RandomForest': (RandomForestRegressor(random_state=42), 
                                self.config.params.get('RandomForestRegressor', {})),
@@ -122,7 +104,6 @@ class ModelTrainer:
                         self.config.params.get('Ridge', {}))
             }
             
-            # Train all models
             best_model = None
             best_score = -float('inf')
             best_model_name = None
@@ -138,7 +119,6 @@ class ModelTrainer:
                     best_model = trained_model
                     best_model_name = model_name
             
-            # Save best model
             model_path = os.path.join(self.config.root_dir, self.config.model_name)
             with open(model_path, 'wb') as f:
                 pickle.dump(best_model, f)

@@ -16,7 +16,6 @@ if __name__ == "__main__":
         logger.info(f">>>>>> Starting {STAGE_NAME} <<<<<<")
         logger.info("=" * 80)
         
-        # Stage 1: Data Ingestion
         logger.info("\n" + "=" * 80)
         logger.info("STAGE 1: Data Ingestion")
         logger.info("=" * 80)
@@ -25,7 +24,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 1: Data Ingestion - COMPLETED\n")
         
-        # Stage 2: Data Validation
         logger.info("=" * 80)
         logger.info("STAGE 2: Data Validation")
         logger.info("=" * 80)
@@ -34,7 +32,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 2: Data Validation - COMPLETED\n")
         
-        # Stage 3: Feature Engineering
         logger.info("=" * 80)
         logger.info("STAGE 3: Feature Engineering")
         logger.info("=" * 80)
@@ -43,7 +40,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 3: Feature Engineering - COMPLETED\n")
         
-        # Stage 4: Data Transformation
         logger.info("=" * 80)
         logger.info("STAGE 4: Data Transformation")
         logger.info("=" * 80)
@@ -52,7 +48,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 4: Data Transformation - COMPLETED\n")
         
-        # Stage 5: Model Training
         logger.info("=" * 80)
         logger.info("STAGE 5: Model Training")
         logger.info("=" * 80)
@@ -61,7 +56,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 5: Model Training - COMPLETED\n")
         
-        # Stage 6: Model Evaluation
         logger.info("=" * 80)
         logger.info("STAGE 6: Model Evaluation")
         logger.info("=" * 80)
@@ -71,7 +65,6 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 6: Model Evaluation - COMPLETED\n")
         
-        # Stage 7: Model Monitoring
         logger.info("=" * 80)
         logger.info("STAGE 7: Model Monitoring")
         logger.info("=" * 80)
@@ -81,23 +74,22 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("STAGE 7: Model Monitoring - COMPLETED\n")
         
-        # Final Summary
         logger.info("\n" + "=" * 80)
-        logger.info("🎉 ALL PIPELINE STAGES COMPLETED SUCCESSFULLY! 🎉")
+        logger.info("ALL PIPELINE STAGES COMPLETED SUCCESSFULLY!")
         logger.info("=" * 80)
         logger.info("\nPipeline Summary:")
-        logger.info("  ✅ Stage 1: Data Ingestion")
-        logger.info("  ✅ Stage 2: Data Validation")
-        logger.info("  ✅ Stage 3: Feature Engineering")
-        logger.info("  ✅ Stage 4: Data Transformation")
-        logger.info("  ✅ Stage 5: Model Training")
-        logger.info("  ✅ Stage 6: Model Evaluation")
-        logger.info("  ✅ Stage 7: Model Monitoring")
+        logger.info("  Stage 1: Data Ingestion")
+        logger.info("  Stage 2: Data Validation")
+        logger.info("  Stage 3: Feature Engineering")
+        logger.info("  Stage 4: Data Transformation")
+        logger.info("  Stage 5: Model Training")
+        logger.info("  Stage 6: Model Evaluation")
+        logger.info("  Stage 7: Model Monitoring")
         logger.info("=" * 80)
         
     except Exception as e:
         logger.exception("Pipeline execution failed!")
         logger.error("=" * 80)
-        logger.error("❌ PIPELINE FAILED")
+        logger.error("PIPELINE FAILED")
         logger.error("=" * 80)
         raise e
