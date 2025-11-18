@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ml-pipeline
-        image: your-dockerhub-username/ml-pipeline:latest
+        image: abeshith/ml-pipeline-evidently:latest
         ports:
         - containerPort: 5000
         resources:
