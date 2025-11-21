@@ -114,5 +114,4 @@ monitoring_task = PythonOperator(
     dag=dag
 )
 
-# Set task dependencies
 data_ingestion_task >> data_validation_task >> feature_engineering_task >> data_transformation_task >> model_trainer_task >> model_evaluation_task >> monitoring_task
